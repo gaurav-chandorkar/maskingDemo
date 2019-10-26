@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TextReader-OCR</string>
+    <string name="stop">Scan</string>
+    <string name="start">Re-scan</string>
+    <string name="empty_text">No text found, kindly try again</string>
+</resources>

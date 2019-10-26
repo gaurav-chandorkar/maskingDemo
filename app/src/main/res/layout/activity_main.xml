@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey" android:keepScreenOn="true">
+
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+        <com.yuvraj.textreader_ocr.common.CameraSourcePreview
+                android:id="@+id/firePreview"
+                android:layout_above="@+id/btn_stop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true" android:layout_marginLeft="0dp" android:layout_marginTop="0dp"
+                android:layout_marginStart="0dp" android:layout_marginBottom="0dp">
+
+            <com.yuvraj.textreader_ocr.common.GraphicOverlay
+                    android:id="@+id/fireFaceOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"/>
+        </com.yuvraj.textreader_ocr.common.CameraSourcePreview>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:text="Stop"
+                android:id="@+id/btn_switch"
+                app:fabSize="normal"
+                android:src="@android:drawable/ic_menu_camera"
+                android:layout_margin="@dimen/margin16"
+                android:visibility="gone"
+                android:layout_alignParentRight="true"
+                android:layout_above="@+id/btn_stop"
+                android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_stop"
+                android:background="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:text="@string/stop"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize16"
+                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:behavior_peekHeight="0dp"
+                    android:layout_gravity="top"
+                    android:background="@color/grey"
+                    android:id="@+id/layoutBottomSheet"
+                    app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:id="@+id/relative_text"
+                        android:visibility="visible"
+                        android:layout_height="wrap_content">
+
+                    <ImageView
+                            android:id="@+id/image_text"
+                            android:layout_width="200dp"
+                            android:layout_marginRight="@dimen/margin10"
+                            android:layout_centerHorizontal="true"
+                            android:paddingRight="@dimen/margin15"
+                            android:paddingTop="@dimen/margin15"
+                            android:paddingBottom="@dimen/margin15"
+                            android:paddingLeft="@dimen/margin15"
+                            android:layout_height="200dp"/>
+
+                    <TextView android:id="@+id/textView"
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:text="@string/empty_text"
+                              android:textColor="@color/black"
+                              android:layout_toLeftOf="@+id/image_share"
+                              android:layout_below="@+id/image_text"
+                              android:padding="@dimen/margin10"
+                              android:textSize="@dimen/textsize16"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/image_share"
+                            android:layout_width="48dp"
+                            android:layout_marginRight="@dimen/margin10"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="@dimen/margin10"
+                            android:layout_marginBottom="@dimen/margin10"
+                            android:paddingRight="@dimen/margin10"
+                            android:paddingTop="@dimen/margin10"
+                            android:paddingBottom="@dimen/margin10"
+                            android:paddingLeft="@dimen/margin8"
+                            android:background="@drawable/circular_bg_white"
+                            app:srcCompat="@drawable/ic_share"
+                            app:tint="@color/colorPrimary"
+                            android:layout_height="48dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/relative_empty_text"
+                                android:visibility="gone"
+                                android:layout_marginTop="@dimen/margin20"
+                                android:layout_marginBottom="@dimen/margin10">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/image_no_text"
+                            android:layout_width="100dp"
+                            android:layout_marginRight="@dimen/margin10"
+                            android:layout_centerHorizontal="true"
+                            android:paddingRight="@dimen/margin15"
+                            android:paddingTop="@dimen/margin15"
+                            android:paddingBottom="@dimen/margin15"
+                            android:paddingLeft="@dimen/margin15"
+                            android:background="@drawable/circular_bg_white"
+                            app:srcCompat="@drawable/ic_empty_text"
+                            app:tint="@color/colorPrimary"
+                            android:layout_height="100dp"/>
+
+                    <TextView android:id="@+id/text_empty"
+                              android:layout_below="@id/image_no_text"
+                              android:layout_width="wrap_content"
+                              android:layout_centerHorizontal="true"
+                              android:layout_marginTop="@dimen/margin10"
+                              android:layout_height="wrap_content"
+                              android:text="@string/empty_text"
+                              android:textColor="@color/black"
+                              android:padding="@dimen/margin10"
+                              android:textSize="@dimen/textsize16"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_start"
+                    android:background="@color/colorPrimary"
+                    android:layout_width="match_parent"
+                    android:text="@string/start"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textsize16"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
