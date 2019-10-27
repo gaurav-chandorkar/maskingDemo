@@ -6,8 +6,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Rect
+import android.graphics.*
 import android.hardware.Camera
 import android.net.Uri
 import android.os.Bundle
@@ -28,13 +27,17 @@ import com.google.firebase.ml.common.FirebaseMLException
 import com.yuvraj.textreader_ocr.common.CameraSource
 import com.yuvraj.textreader_ocr.textrecognition.TextRecognitionProcessor
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.regex.Pattern
 
 
-class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+class CameraScannerActivity : AppCompatActivity(),
+    ActivityCompat.OnRequestPermissionsResultCallback,
+    TextRecognitionProcessor.CaptureImageAndRectListener {
+
 
     private var cameraSource: CameraSource? = null
     private var selectedModel = TEXT_DETECTION
@@ -45,6 +48,28 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
     private var menu: Menu? = null
     var mTextExtracted = ""
     var image: Bitmap? = null
+
+    var rectList = mutableListOf<Rect?>()
+    private var backgroundJob = Job()
+    private var uiScope = CoroutineScope(Dispatchers.Main + backgroundJob)
+
+
+    override fun onCaptureOriginalImage(textMsg: String, image: Bitmap?) {
+        showTextFromImage(textMsg, image)
+    }
+
+    var isEven = true
+    override fun addRect(rect: Rect?) {
+        if (rectList.size < 2) {
+            rectList.add(rect)
+        } else if (isEven) {
+            rectList.set(0, rect)
+            isEven = false
+        } else {
+            isEven = true
+            rectList.set(1, rect)
+        }
+    }
 
     private val requiredPermissions: Array<String?>
         get() {
@@ -86,36 +111,49 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
             toggleCamera(0)
             toggleBottomSheet()
 
-            //extractOnlyNumber(mTextExtracted)
-            var cw = ContextWrapper(this);
-            // path to /data/data/yourapp/app_data/imageDir
-            var directory = cw.getExternalFilesDir(null);
-            // Create imageDir
-            var mypath = File(directory, "image.jpg");
+            uiScope.launch {
+                var cw = ContextWrapper(this@CameraScannerActivity);
+                // path to /data/data/yourapp/app_data/imageDir
+                var directory = cw.getExternalFilesDir(null);
+                // Create imageDir
+                var mypath = File(directory, "image.jpg");
 
-            val uri = Uri.fromFile(mypath)
-            Log.e(TAG, "image path $mypath is ;uri= ${uri} image= $image")
-            image_text.invalidate()
-            // image_text.setImageBitmap(image)
-            //   img_print_screen.setImageBitmap(image)
-            Glide.with(this@CameraScannerActivity).load(image).into(image_text)
-            Log.e(TAG," previewi ${firePreview.getDrawingCache()}")
-            saveToInternalStorage(this@CameraScannerActivity, image) //  image_text.invalidate()
+                val uri = Uri.fromFile(mypath)
+                image = drawRectOverImage(image)
+                Log.e(TAG, "image path $mypath is ;uri= ${uri} image= $image")
+                image_text.invalidate()
+                saveToInternalStorage(this@CameraScannerActivity, image) //  image_text.invalidate()
 
-//            var bitmap = takeScreenShotOfView(fireFaceOverlay, 400, 400)
-//            image_text.setImageBitmap(bitmap)
-//            TextRecognitionUtils().recognizeText(bitmap, this)
+                withContext(Dispatchers.Main) {
+                    Glide.with(this@CameraScannerActivity).load(image).into(image_text)
+                }
+                Log.e(TAG, " rectList size ${rectList.size}")
+            }
+
         }
 
         image_share.setOnClickListener {
             shareTextExtracted()
         }
-        captureImage();
     }
 
-    fun captureImage() {
-        firePreview.getDrawingCache()
-        cameraSource
+    fun drawRectOverImage(image: Bitmap?): Bitmap? {
+
+        image?.let {
+            val paint = Paint()
+            paint.color = Color.BLACK
+            val tempBitmap = Bitmap.createBitmap(image.width, image.height, image.config)
+            val canvas = Canvas(tempBitmap)
+            canvas.drawBitmap(image, 0f, 0f, null)
+            for (rect in rectList)
+                canvas.drawRect(rect!!, paint)
+
+            return tempBitmap
+        } ?: kotlin.run {
+            return image
+        }
+
+
     }
 
     fun onCameraSwitch(isChecked: Boolean) {
@@ -151,7 +189,12 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
             when (model) {
                 TEXT_DETECTION -> {
                     Log.i(TAG, "Using Text Detector Processor")
-                    cameraSource?.setMachineLearningFrameProcessor(TextRecognitionProcessor(this))
+                    cameraSource?.setMachineLearningFrameProcessor(
+                        TextRecognitionProcessor(
+                            this,
+                            this
+                        )
+                    )
                 }
                 else -> Log.e(TAG, "Unknown model: $model")
             }
@@ -199,6 +242,7 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
     public override fun onDestroy() {
         super.onDestroy()
         cameraSource?.release()
+        backgroundJob.cancel()
     }
 
     private fun allPermissionsGranted(): Boolean {
@@ -212,7 +256,10 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
 
     private fun checkAppPermission() {
         // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -269,7 +316,11 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
         private const val PERMISSION_REQUESTS = 1
 
         private fun isPermissionGranted(context: Context, permission: String): Boolean {
-            if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 Log.i(TAG, "Permission granted: $permission")
                 return true
             }
@@ -308,7 +359,13 @@ class CameraScannerActivity : AppCompatActivity(), ActivityCompat.OnRequestPermi
 
     fun dpToPx(context: Context, dp: Int): Int {
         val r = context.resources
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics))
+        return Math.round(
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp.toFloat(),
+                r.displayMetrics
+            )
+        )
     }
 
     private fun initBottomSheet() {

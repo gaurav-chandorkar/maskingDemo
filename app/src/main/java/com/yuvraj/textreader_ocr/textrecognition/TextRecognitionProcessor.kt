@@ -1,6 +1,7 @@
 package com.yuvraj.textreader_ocr.textrecognition
 
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.vision.FirebaseVision
@@ -16,7 +17,7 @@ import java.io.IOException
 import java.util.regex.Pattern
 
 /** Processor for the text recognition demo.  */
-class TextRecognitionProcessor(var activity: CameraScannerActivity) : VisionProcessorBase<FirebaseVisionText>() {
+class TextRecognitionProcessor(var activity: CameraScannerActivity,var imageCaptureListener:CaptureImageAndRectListener) : VisionProcessorBase<FirebaseVisionText>() {
 
     private val detector: FirebaseVisionTextRecognizer = FirebaseVision.getInstance().onDeviceTextRecognizer
 
@@ -47,7 +48,7 @@ class TextRecognitionProcessor(var activity: CameraScannerActivity) : VisionProc
 
         val blocks = results.textBlocks
 //        if(blocks.size > 1){
-        activity.showTextFromImage(results.text, originalCameraImage)
+        imageCaptureListener.onCaptureOriginalImage(results.text, originalCameraImage)
 //        }
 
 
@@ -58,11 +59,13 @@ class TextRecognitionProcessor(var activity: CameraScannerActivity) : VisionProc
                Log.e(TAG," grv element line  ${elements.toString()}")
                 for (k in elements.indices) {
                     val textGraphic = TextGraphic(graphicOverlay, elements[k])
+
                     //   Log.e(TAG," element ${elements[k].text} checkForAadharCardNumber ${checkForAadharCardNumber(elements[k].text)}")
                    try {
                      //  Log.e(TAG,"checkForAadharCardNumber ${checkForAadharCardNumber(elements[k].text)} && ${checkForAadharCardNumber(elements[k+1].text)}")
-                       if (checkForAadharCardNumber(elements[k].text) && checkForAadharCardNumber(elements[k+1].text))
+                       if (checkForAadharCardNumber(elements[k].text) && checkForAadharCardNumber(elements[k+1].text)) {
                            graphicOverlay.add(textGraphic)
+                            imageCaptureListener.addRect(elements[k].boundingBox)}
                    }catch ( e:java.lang.Exception){
 
                    }
@@ -85,6 +88,10 @@ class TextRecognitionProcessor(var activity: CameraScannerActivity) : VisionProc
         Log.w(TAG, "Text detection failed.$e")
     }
 
+    public interface CaptureImageAndRectListener {
+        abstract fun onCaptureOriginalImage(textMsg: String, image: Bitmap?)
+        abstract fun  addRect(rect: Rect?)
+    }
     companion object {
 
         private const val TAG = "TextRecProc"
