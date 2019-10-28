@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.yuvraj.textreader_ocr.common;
+package com.grv.text_ocr.common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import com.google.android.gms.common.images.Size;
-import com.yuvraj.textreader_ocr.common.CameraSource;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -100,7 +99,7 @@ public class CameraSourcePreview extends ViewGroup {
     }
   }
 
-  public void start(com.yuvraj.textreader_ocr.common.CameraSource cameraSource, GraphicOverlay overlay) throws IOException {
+  public void start(com.grv.text_ocr.common.CameraSource cameraSource, GraphicOverlay overlay) throws IOException {
     this.overlay = overlay;
     start(cameraSource);
   }

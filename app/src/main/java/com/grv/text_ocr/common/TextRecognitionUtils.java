@@ -1,4 +1,4 @@
-package com.yuvraj.textreader_ocr.common;
+package com.grv.text_ocr.common;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -17,7 +17,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionCloudTextRecognizerOptio
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
-import com.yuvraj.textreader_ocr.CameraScannerActivity;
+import com.grv.text_ocr.CameraScannerActivity;
 
 import java.util.Arrays;
 import java.util.List;

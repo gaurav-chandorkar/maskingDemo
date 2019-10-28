@@ -1,4 +1,4 @@
-package com.yuvraj.textreader_ocr
+package com.grv.text_ocr
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -24,8 +24,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.ml.common.FirebaseMLException
-import com.yuvraj.textreader_ocr.common.CameraSource
-import com.yuvraj.textreader_ocr.textrecognition.TextRecognitionProcessor
+import com.grv.text_ocr.common.CameraSource
+import com.grv.text_ocr.textrecognition.TextRecognitionProcessor
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.File

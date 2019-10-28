@@ -1,4 +1,4 @@
-package com.yuvraj.textreader_ocr.textrecognition
+package com.grv.text_ocr.textrecognition
 
 import android.graphics.Bitmap
 import android.graphics.Rect
@@ -9,10 +9,10 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer
 import com.google.firebase.samples.apps.mlkit.kotlin.textrecognition.TextGraphic
-import com.yuvraj.textreader_ocr.CameraScannerActivity
-import com.yuvraj.textreader_ocr.common.CameraImageGraphic
-import com.yuvraj.textreader_ocr.common.FrameMetadata
-import com.yuvraj.textreader_ocr.common.GraphicOverlay
+import com.grv.text_ocr.CameraScannerActivity
+import com.grv.text_ocr.common.CameraImageGraphic
+import com.grv.text_ocr.common.FrameMetadata
+import com.grv.text_ocr.common.GraphicOverlay
 import java.io.IOException
 import java.util.regex.Pattern
 

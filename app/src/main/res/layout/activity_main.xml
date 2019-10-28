@@ -9,7 +9,7 @@
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
 
 
-        <com.yuvraj.textreader_ocr.common.CameraSourcePreview
+        <com.grv.text_ocr.common.CameraSourcePreview
                 android:id="@+id/firePreview"
                 android:layout_above="@+id/btn_stop"
                 android:layout_width="match_parent"
@@ -19,7 +19,7 @@
                 android:layout_alignParentLeft="true" android:layout_marginLeft="0dp" android:layout_marginTop="0dp"
                 android:layout_marginStart="0dp" android:layout_marginBottom="0dp">
 
-            <com.yuvraj.textreader_ocr.common.GraphicOverlay
+            <com.grv.text_ocr.common.GraphicOverlay
                     android:id="@+id/fireFaceOverlay"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -29,7 +29,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentRight="true"/>
-        </com.yuvraj.textreader_ocr.common.CameraSourcePreview>
+        </com.grv.text_ocr.common.CameraSourcePreview>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"

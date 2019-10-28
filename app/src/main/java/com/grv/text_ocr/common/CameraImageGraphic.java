@@ -1,4 +1,4 @@
-package com.yuvraj.textreader_ocr.common;
+package com.grv.text_ocr.common;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.google.firebase.ml.vision.text.FirebaseVisionText
-import com.yuvraj.textreader_ocr.common.GraphicOverlay
+import com.grv.text_ocr.common.GraphicOverlay
 
 /**
  * Graphic instance for rendering TextBlock position, size, and ID within an associated graphic

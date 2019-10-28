@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.yuvraj.textreader_ocr.common;
+package com.grv.text_ocr.common;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -30,7 +30,7 @@ import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
-import androidx.annotation.StringDef;
+
 import com.google.android.gms.common.images.Size;
 
 import java.io.IOException;

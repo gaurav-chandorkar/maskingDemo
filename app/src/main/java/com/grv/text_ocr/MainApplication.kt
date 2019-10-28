@@ -1,4 +1,4 @@
-package com.yuvraj.textreader_ocr
+package com.grv.text_ocr
 
 import android.app.Application
 import com.google.firebase.FirebaseApp

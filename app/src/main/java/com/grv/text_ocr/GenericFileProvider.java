@@ -1,4 +1,4 @@
-package com.yuvraj.textreader_ocr;
+package com.grv.text_ocr;
 
 
 import androidx.core.content.FileProvider;

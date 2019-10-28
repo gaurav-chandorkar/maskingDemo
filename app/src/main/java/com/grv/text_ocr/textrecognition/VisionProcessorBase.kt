@@ -1,14 +1,14 @@
-package com.yuvraj.textreader_ocr.textrecognition
+package com.grv.text_ocr.textrecognition
 
 import android.graphics.Bitmap
 import androidx.annotation.GuardedBy
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import com.yuvraj.textreader_ocr.common.BitmapUtils
-import com.yuvraj.textreader_ocr.common.FrameMetadata
-import com.yuvraj.textreader_ocr.common.GraphicOverlay
-import com.yuvraj.textreader_ocr.common.VisionImageProcessor
+import com.grv.text_ocr.common.BitmapUtils
+import com.grv.text_ocr.common.FrameMetadata
+import com.grv.text_ocr.common.GraphicOverlay
+import com.grv.text_ocr.common.VisionImageProcessor
 import java.nio.ByteBuffer
 
 /**
