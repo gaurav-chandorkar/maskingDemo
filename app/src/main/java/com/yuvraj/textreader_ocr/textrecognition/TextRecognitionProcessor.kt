@@ -56,7 +56,6 @@ class TextRecognitionProcessor(var activity: CameraScannerActivity,var imageCapt
             val lines = blocks[i].lines
             for (j in lines.indices) {
                 val elements = lines[j].elements
-               Log.e(TAG," grv element line  ${elements.toString()}")
                 for (k in elements.indices) {
                     val textGraphic = TextGraphic(graphicOverlay, elements[k])
 

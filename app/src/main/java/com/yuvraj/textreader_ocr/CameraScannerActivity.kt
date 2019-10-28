@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.hardware.Camera
@@ -17,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -103,6 +103,7 @@ class CameraScannerActivity : AppCompatActivity(),
         }
 
         btn_start.setOnClickListener {
+            rectList.clear()
             toggleCamera(1)
             toggleBottomSheet()
         }
@@ -111,33 +112,27 @@ class CameraScannerActivity : AppCompatActivity(),
             toggleCamera(0)
             toggleBottomSheet()
 
-            uiScope.launch {
-                var cw = ContextWrapper(this@CameraScannerActivity);
-                // path to /data/data/yourapp/app_data/imageDir
-                var directory = cw.getExternalFilesDir(null);
-                // Create imageDir
-                var mypath = File(directory, "image.jpg");
-
-                val uri = Uri.fromFile(mypath)
-                image = drawRectOverImage(image)
-                Log.e(TAG, "image path $mypath is ;uri= ${uri} image= $image")
-                image_text.invalidate()
-                saveToInternalStorage(this@CameraScannerActivity, image) //  image_text.invalidate()
-
-                withContext(Dispatchers.Main) {
-                    Glide.with(this@CameraScannerActivity).load(image).into(image_text)
-                }
-                Log.e(TAG, " rectList size ${rectList.size}")
-            }
 
         }
 
-        image_share.setOnClickListener {
-            shareTextExtracted()
+        image_select.setOnClickListener {
+            if (rectList.size>0){
+                showToast("Aadhar  found")
+            }else{
+                showToast("Aadhar not found")
+
+            }
         }
     }
 
-    fun drawRectOverImage(image: Bitmap?): Bitmap? {
+    private fun showToast(msg:String){
+        Toast.makeText(
+            this@CameraScannerActivity,
+            msg,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+    private fun drawRectOverImage(image: Bitmap?): Bitmap? {
 
         image?.let {
             val paint = Paint()
@@ -148,6 +143,13 @@ class CameraScannerActivity : AppCompatActivity(),
             for (rect in rectList)
                 canvas.drawRect(rect!!, paint)
 
+            try {
+                val file = File(getExternalFilesDir(null), "compressImage.jpg")
+                tempBitmap.compress(Bitmap.CompressFormat.JPEG, 50, FileOutputStream(file))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e(TAG, " Exception while compressing")
+            }
             return tempBitmap
         } ?: kotlin.run {
             return image
@@ -381,6 +383,7 @@ class CameraScannerActivity : AppCompatActivity(),
                     BottomSheetBehavior.STATE_HIDDEN -> {
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        displayImage()
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         mTextExtracted = ""
@@ -398,6 +401,19 @@ class CameraScannerActivity : AppCompatActivity(),
 
             }
         })
+    }
+
+    private fun displayImage() {
+        uiScope.launch {
+
+            image = drawRectOverImage(image)
+            image_text.invalidate()
+            withContext(Dispatchers.Main) {
+                Glide.with(this@CameraScannerActivity).load(image).into(image_text)
+
+            }
+            Log.e(TAG, " rectList size ${rectList.size}")
+        }
     }
 
     /**
@@ -431,13 +447,21 @@ class CameraScannerActivity : AppCompatActivity(),
     }
 
     private fun toggleFlash() {
-        isEnableFlash = !isEnableFlash
-        if (isEnableFlash) {
-            menu?.getItem(0)?.icon = ContextCompat.getDrawable(this, R.drawable.ic_flash_off);
-            cameraSource?.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-        } else {
-            menu?.getItem(0)?.icon = ContextCompat.getDrawable(this, R.drawable.ic_flash_on);
-            cameraSource?.setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
+        try {
+
+
+            isEnableFlash = !isEnableFlash
+            if (isEnableFlash) {
+                menu?.getItem(0)?.icon = ContextCompat.getDrawable(this, R.drawable.ic_flash_off);
+                cameraSource?.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
+            } else {
+                menu?.getItem(0)?.icon = ContextCompat.getDrawable(this, R.drawable.ic_flash_on);
+                cameraSource?.setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
+            }
+        } catch (e: Exception) {
+            showToast("Flash Mode Not Supported ")
+
+            e.printStackTrace()
         }
     }
 
@@ -471,7 +495,7 @@ class CameraScannerActivity : AppCompatActivity(),
             }
 
             R.id.action_flash -> {
-                //  toggleFlash()
+                toggleFlash()
                 true
             }
             R.id.action_print -> {
@@ -492,28 +516,6 @@ class CameraScannerActivity : AppCompatActivity(),
     }
 
 
-    private fun saveToInternalStorage(context: Context, bitmapImage: Bitmap?): String {
-        var cw = ContextWrapper(context);
-        // path to /data/data/yourapp/app_data/imageDir
-        var directory = cw.getExternalFilesDir(null);
-        // Create imageDir
-        var mypath = File(directory, "image.jpg");
-        Log.e("Gaurav", "It Works ${directory.absolutePath}")
-
-        var fos: FileOutputStream? = null;
-        try {
-            fos = FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            //Bitmap scaledBitmap = getCompressedBitmap(bitmapImage);
-            bitmapImage?.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (e: Exception) {
-            e.printStackTrace();
-        } finally {
-            fos?.close();
-        }
-        return directory.getAbsolutePath();
-    }
-
     override fun onBackPressed() {
         if (sheetBehavior?.state != BottomSheetBehavior.STATE_COLLAPSED) {
             toggleBottomSheet()
@@ -523,13 +525,7 @@ class CameraScannerActivity : AppCompatActivity(),
         }
     }
 
-    fun shareTextExtracted() {
-        var sendIntent = Intent()
-        sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_TEXT, mTextExtracted)
-        sendIntent.type = "text/plain"
-        startActivity(sendIntent)
-    }
+
 
     fun toggleViews(state: Int) {
         when (state) {
@@ -556,10 +552,9 @@ class CameraScannerActivity : AppCompatActivity(),
                     textView.text = getString(R.string.empty_text)
                     image_no_text.setImageBitmap(image)
                 } else {
-                    mTextExtracted = textMsg
+                    mTextExtracted = extractOnlyNumber(textMsg)
                     toggleViews(1)
-                    textView.text = textMsg
-                    textView.text = extractOnlyNumber(textMsg)
+                    textView.text =""
                 }
             }
         }

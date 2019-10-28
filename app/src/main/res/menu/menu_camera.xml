@@ -11,7 +11,8 @@
             android:id="@+id/action_camera"
             android:title="Camera"
             android:icon="@drawable/ic_switch_camera"
-            app:showAsAction="ifRoom"/>
+            app:showAsAction="ifRoom"
+            android:visible="false"/>
     <item
             android:id="@+id/action_print"
             android:title="print"

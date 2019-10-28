@@ -95,13 +95,13 @@
                               android:layout_height="wrap_content"
                               android:text="@string/empty_text"
                               android:textColor="@color/black"
-                              android:layout_toLeftOf="@+id/image_share"
+                              android:layout_toLeftOf="@+id/image_select"
                               android:layout_below="@+id/image_text"
                               android:padding="@dimen/margin10"
                               android:textSize="@dimen/textsize16"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/image_share"
+                            android:id="@+id/image_select"
                             android:layout_width="48dp"
                             android:layout_marginRight="@dimen/margin10"
                             android:layout_centerVertical="true"
